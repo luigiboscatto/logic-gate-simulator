@@ -1,26 +1,33 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Container, Row, Col, Navbar } from 'react-bootstrap';
+import { SimulationProvider } from './context/SimulationContext';
+import { Board } from './components/Board/Board';
+import { Palette } from './components/Palette/Palette';
+import { TruthTable } from './components/TruthTable/TruthTable';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <SimulationProvider>
+      <div className="App">
+        <Navbar bg="dark" variant="dark" expand="lg">
+          <Container>
+            <Navbar.Brand href="#home">Logic Gate Simulator</Navbar.Brand>
+          </Container>
+        </Navbar>
+        <Container fluid>
+          <Row>
+            <Col md={3}>
+              <Palette />
+              <TruthTable />
+            </Col>
+            <Col md={9}>
+              <Board />
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    </SimulationProvider>
   );
-}
+};
 
 export default App;
