@@ -1,5 +1,5 @@
 import { values, mapValues } from 'lodash';
-import { SimulationType } from '../types';
+import { LinkType, NodeType, SimulationType } from '../types';
 
 export function checkCircularDependency(fromNodeId: string, toNodeId: string, simulation: SimulationType): boolean {
   const visited = new Set<string>();
@@ -40,7 +40,7 @@ export function runSimulation(simulation: SimulationType): SimulationType {
     const nodeId = nodeQueue.shift()!;
     if (processedNodes.has(nodeId)) continue;
 
-    const node = newSimulation.nodes[nodeId];
+    const node: NodeType = newSimulation.nodes[nodeId];
     const inputLinks = values(newSimulation.links).filter(link => link.to.nodeId === nodeId);
 
     if (inputLinks.some(link => typeof link.state === 'undefined')) {
@@ -57,7 +57,7 @@ export function runSimulation(simulation: SimulationType): SimulationType {
     const [outputState] = node.logic(inputValues);
     node.state = outputState;
 
-    const outputLinks = values(newSimulation.links).filter(link => link.from.nodeId === nodeId);
+    const outputLinks: LinkType[] = values(newSimulation.links).filter(link => link.from.nodeId === nodeId);
     for (const link of outputLinks) {
       link.state = outputState;
       nodeQueue.push(link.to.nodeId);

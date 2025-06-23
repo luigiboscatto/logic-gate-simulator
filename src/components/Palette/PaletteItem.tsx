@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
-import { ItemTypes } from 'types';
+import { ItemTypes } from '../../types';
 
 export const PaletteItem: React.FC<{ gate: any }> = ({ gate }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
@@ -13,7 +13,7 @@ export const PaletteItem: React.FC<{ gate: any }> = ({ gate }) => {
 
   return (
     <div
-      ref={drag}
+      ref={drag as unknown as React.Ref<HTMLDivElement>}
       style={{
         opacity: isDragging ? 0.5 : 1,
         padding: '8px',

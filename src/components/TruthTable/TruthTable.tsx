@@ -12,10 +12,13 @@ export const TruthTable: React.FC = () => {
         const inputNodes = values(simulation.nodes).filter(node => node.type === 'INPUT');
         const outputNodes = values(simulation.nodes).filter(node => node.outputs.length === 0);
 
-        if (inputNodes.length === 0) return [];
+        // Always return an object, with empty arrays if there are no inputs
+        if (inputNodes.length === 0) {
+            return { headers: [], rows: [] };
+        }
 
         const headers = [...inputNodes.map(n => n.type + ' ' + n.id.substring(0, 2)), ...outputNodes.map(n => 'OUT ' + n.id.substring(0, 2))];
-        const rows = [];
+        const rows: (boolean | string)[][] = []; // Explicitly type rows
         const numCombinations = Math.pow(2, inputNodes.length);
 
         for (let i = 0; i < numCombinations; i++) {
@@ -25,8 +28,10 @@ export const TruthTable: React.FC = () => {
             // Set input values for this combination
             inputNodes.forEach((node, index) => {
                 const state = ((i >> (inputNodes.length - 1 - index)) & 1) === 1;
-                tempSim.nodes[node.id].state = state;
-                tempSim.nodes[node.id].logic = () => [state];
+                if (tempSim.nodes[node.id]) {
+                    tempSim.nodes[node.id].state = state;
+                    // It's safer to not override the logic function if it's not necessary for the simulation run
+                }
                 row.push(state);
             });
 
@@ -36,7 +41,7 @@ export const TruthTable: React.FC = () => {
             // Get output values
             outputNodes.forEach(node => {
                 const outputNode = resultSim.nodes[node.id];
-                row.push(outputNode.state === undefined ? '?' : outputNode.state);
+                row.push(outputNode?.state === undefined ? '?' : outputNode.state);
             });
             rows.push(row);
         }

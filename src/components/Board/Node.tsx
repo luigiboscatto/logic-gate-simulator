@@ -10,7 +10,7 @@ interface NodeProps {
   onMove: (id: string, x: number, y: number) => void;
 }
 
-export const Node: React.FC<NodeProps> = ({ node, onMove }) => {
+export const NodeComponent: React.FC<NodeProps> = ({ node, onMove }) => {
   const { toggleInputNode } = useSimulation();
 
   const [{ isDragging }, drag] = useDrag(() => ({
@@ -37,7 +37,7 @@ export const Node: React.FC<NodeProps> = ({ node, onMove }) => {
 
   return (
     <div
-      ref={drag}
+      ref={drag as unknown as React.Ref<HTMLDivElement>}
       className={`node ${node.state ? 'active' : ''}`}
       style={{
         left: node.position.x,
