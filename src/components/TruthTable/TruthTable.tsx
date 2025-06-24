@@ -2,7 +2,7 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 import { values, cloneDeep } from 'lodash';
 import { useSimulation } from '../../hooks/useSimulation';
-import { SimulationType } from '../../types';
+import { SimulationState } from '../../types';
 import { runSimulation } from '../../utils/simulation';
 
 export const TruthTable: React.FC = () => {
@@ -22,7 +22,7 @@ export const TruthTable: React.FC = () => {
         const numCombinations = Math.pow(2, inputNodes.length);
 
         for (let i = 0; i < numCombinations; i++) {
-            const tempSim: SimulationType = cloneDeep(simulation);
+            const tempSim: SimulationState = cloneDeep(simulation);
             const row: (boolean | string)[] = [];
 
             // Set input values for this combination

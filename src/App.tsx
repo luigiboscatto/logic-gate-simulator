@@ -14,10 +14,12 @@ const App: React.FC = () => {
             <Navbar.Brand href="#home">Logic Gate Simulator</Navbar.Brand>
           </Container>
         </Navbar>
-        <Container fluid>
+        <Container fluid className="mt-4">
           <Row>
             <Col md={3}>
-              <Palette />
+              <div className="mb-4">
+                <Palette />
+              </div>
               <TruthTable />
             </Col>
             <Col md={9}>

@@ -1,9 +1,7 @@
 import React, { createContext, useState, useCallback } from 'react';
 import { runSimulation, checkCircularDependency } from '../utils/simulation';
 import { v4 as uuidv4 } from 'uuid';
-import { LinkType, NodeType, SimulationType } from '../types';
-// You no longer need to import NodeComponent here for the type definition
-// import { NodeComponent } from '../components/Board/Node';
+import { LinkType, NodeType, SimulationState } from '../types';
 
 // Define the shape of the data needed to create a new node.
 // This makes it clear what `addNode` expects.
@@ -14,10 +12,11 @@ type NewNodeData = {
 };
 
 interface SimulationContextProps {
-    simulation: SimulationType;
+    simulation: SimulationState;
     // FIX: Changed the type of the 'node' parameter to match the actual data object being passed.
     addNode: (nodeData: NewNodeData, gateType: any) => void;
     moveNode: (nodeId: string, position: { x: number; y: number }) => void;
+    removeNode: (nodeId: string) => void;
     addLink: (from: { nodeId: string; portId: string }, to: { nodeId: string; portId: string }) => void;
     toggleInputNode: (nodeId: string) => void;
 }
@@ -25,9 +24,9 @@ interface SimulationContextProps {
 export const SimulationContext = createContext<SimulationContextProps | undefined>(undefined);
 
 export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [simulation, setSimulation] = useState<SimulationType>({ nodes: {}, links: {} });
+    const [simulation, setSimulation] = useState<SimulationState>({ nodes: {}, links: {} });
 
-    const updateAndRunSimulation = (newSim: SimulationType) => {
+    const updateAndRunSimulation = (newSim: SimulationState) => {
         const updatedSim = runSimulation(newSim);
         setSimulation(updatedSim);
     };
@@ -64,6 +63,28 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         }));
     }, []);
 
+    const removeNode = (nodeId: string) => {
+        setSimulation(prev => {
+            // Create a new nodes object without the deleted node
+            const newNodes = { ...prev.nodes };
+            delete newNodes[nodeId];
+
+            // Create a new links object, filtering out any that connect to the deleted node
+            const newLinks = Object.values(prev.links).reduce((acc, link) => {
+                if (link.from.nodeId !== nodeId && link.to.nodeId !== nodeId) {
+                    acc[link.id] = link;
+                }
+                return acc;
+            }, {} as { [id: string]: LinkType });
+
+            return {
+                ...prev,
+                nodes: newNodes,
+                links: newLinks,
+            };
+        });
+    };
+
     const addLink = useCallback((from: { nodeId: string; portId: string }, to: { nodeId: string; portId: string }) => {
         if (checkCircularDependency(from.nodeId, to.nodeId, simulation)) {
             alert("Cannot create a circular connection.");
@@ -92,7 +113,7 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }, [simulation]);
 
     return (
-        <SimulationContext.Provider value={{ simulation, addNode, moveNode, addLink, toggleInputNode }}>
+        <SimulationContext.Provider value={{ simulation, addNode, moveNode, removeNode, addLink, toggleInputNode }}>
             {children}
         </SimulationContext.Provider>
     );

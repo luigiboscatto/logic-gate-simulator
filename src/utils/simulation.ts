@@ -1,7 +1,7 @@
 import { values, mapValues } from 'lodash';
-import { LinkType, NodeType, SimulationType } from '../types';
+import { LinkType, NodeType, SimulationState } from '../types';
 
-export function checkCircularDependency(fromNodeId: string, toNodeId: string, simulation: SimulationType): boolean {
+export function checkCircularDependency(fromNodeId: string, toNodeId: string, simulation: SimulationState): boolean {
   const visited = new Set<string>();
   const queue = [toNodeId];
 
@@ -23,7 +23,7 @@ export function checkCircularDependency(fromNodeId: string, toNodeId: string, si
   return false;
 }
 
-export function runSimulation(simulation: SimulationType): SimulationType {
+export function runSimulation(simulation: SimulationState): SimulationState {
   const newSimulation = {
     ...simulation,
     nodes: mapValues(simulation.nodes, node => ({ ...node, state: undefined })),

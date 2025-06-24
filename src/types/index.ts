@@ -10,8 +10,8 @@ export interface NodeType {
   position: { x: number; y: number };
   inputs: PortType[];
   outputs: PortType[];
-  logic: (inputs: boolean[]) => boolean[];
   state?: boolean;
+  logic: (inputs: boolean[]) => boolean[];
 }
 
 export interface LinkType {
@@ -21,7 +21,7 @@ export interface LinkType {
   state?: boolean;
 }
 
-export interface SimulationType {
+export interface SimulationState {
   nodes: { [id: string]: NodeType };
   links: { [id: string]: LinkType };
 }

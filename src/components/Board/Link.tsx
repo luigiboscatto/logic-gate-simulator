@@ -11,16 +11,16 @@ export const Link: React.FC<LinkProps> = ({ link, nodes }) => {
   const toNode = nodes[link.to.nodeId];
 
   if (!fromNode || !toNode) {
-    return null; // Don't render if nodes are not found
+    return null;
   }
-  
+
   const fromPortIndex = fromNode.outputs.findIndex(p => p.id === link.from.portId);
   const toPortIndex = toNode.inputs.findIndex(p => p.id === link.to.portId);
 
   const x1 = fromNode.position.x + 80; // Node width
   const y1 = fromNode.position.y + 25 + (fromPortIndex * 20); // Adjust for port position
   const x2 = toNode.position.x;
-  const y2 = toNode.position.y + 25 + (toPortIndex * 20);
+  const y2 = toNode.position.y + 15 + (toPortIndex * 20);
 
   return (
     <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
