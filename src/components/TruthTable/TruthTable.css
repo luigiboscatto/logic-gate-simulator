@@ -1,0 +1,75 @@
+.truth-table-container {
+  margin-top: 20px;
+}
+
+.truth-table-title {
+  margin-bottom: 10px;
+  color: #343a40;
+  font-weight: 600;
+}
+
+.table-responsive {
+  max-height: 400px;
+  overflow: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+}
+
+.truth-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.truth-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: center;
+}
+
+.truth-table thead th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.truth-table thead th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.truth-table tbody {
+  background-color: #fff;
+}
+
+.truth-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.truth-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+.truth-table tbody td {
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.truth-table tbody tr:hover td {
+  background-color: #f1f1f1;
+}
+
+.truth-table .cell-true {
+  background-color: #d4edda !important;
+  color: #155724 !important;
+}
+
+.truth-table .cell-false {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+}
+
+.truth-table .cell-unknown {
+  background-color: #fff3cd !important;
+  color: #856404 !important;
+}
