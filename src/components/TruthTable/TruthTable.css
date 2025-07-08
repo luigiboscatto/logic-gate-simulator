@@ -1,75 +1,75 @@
 .truth-table-container {
-  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  overflow-y: auto;
 }
 
 .truth-table-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
-  color: #343a40;
-  font-weight: 600;
+}
+
+.truth-table-title h4 {
+  margin: 0;
 }
 
 .table-responsive {
-  max-height: 400px;
-  overflow: auto;
-  border: 1px solid #dee2e6;
-  border-radius: 12px;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .truth-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  border-radius: 12px;
-  overflow: hidden;
-  width: 100%;
-}
-
-.truth-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
+  margin-bottom: 0;
+  font-size: 0.9rem;
   text-align: center;
 }
 
-.truth-table thead th:first-child {
-  border-top-left-radius: 12px;
+.truth-table th {
+  background-color: #e9ecef;
+  transition: background-color 0.2s;
 }
 
-.truth-table thead th:last-child {
-  border-top-right-radius: 12px;
+.truth-table th[style*="cursor: pointer"]:hover {
+  background-color: #d4dae0;
 }
 
-.truth-table tbody {
-  background-color: #fff;
+.truth-table td.cell-true {
+  background-color: #d4edda;
+  color: #155724;
+  font-weight: bold;
 }
 
-.truth-table tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 12px;
+.truth-table td.cell-false {
+  background-color: #f8d7da;
+  color: #721c24;
+  font-weight: bold;
 }
 
-.truth-table tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 12px;
+.truth-table td.cell-unknown {
+  background-color: #fff3cd;
+  color: #856404;
 }
 
-.truth-table tbody td {
-  text-align: center;
-  transition: background-color 0.3s;
+.expand-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
-.truth-table tbody tr:hover td {
-  background-color: #f1f1f1;
+.expand-button:hover {
+  background-color: #0056b3;
 }
 
-.truth-table .cell-true {
-  background-color: #d4edda !important;
-  color: #155724 !important;
-}
-
-.truth-table .cell-false {
-  background-color: #f8d7da !important;
-  color: #721c24 !important;
-}
-
-.truth-table .cell-unknown {
-  background-color: #fff3cd !important;
-  color: #856404 !important;
+.expand-button:active {
+  transform: scale(0.95);
 }

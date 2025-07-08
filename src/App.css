@@ -36,3 +36,18 @@
     transform: rotate(360deg);
   }
 }
+
+.navbar-custom {
+  background-color: #2c3e50;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  padding: 0.75rem 0;
+}
+
+.navbar-brand-custom {
+  font-weight: 600;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.5px;
+  color: #ecf0f1 !important;
+}

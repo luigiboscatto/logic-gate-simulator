@@ -4,16 +4,23 @@ import { SimulationProvider } from './context/SimulationContext';
 import { Board } from './components/Board/Board';
 import { Palette } from './components/Palette/Palette';
 import { TruthTable } from './components/TruthTable/TruthTable';
+import './App.css';
 
 const App: React.FC = () => {
   return (
     <SimulationProvider>
       <div className="App">
-        <Navbar bg="dark" variant="dark" expand="lg">
+        <Navbar className="navbar-custom" variant="dark" expand="lg">
           <Container>
-            <Navbar.Brand href="#home">Logic Gate Simulator</Navbar.Brand>
+            <Navbar.Brand href="#home" className="navbar-brand-custom">
+              <span role="img" aria-label="light-bulb" style={{ marginRight: '10px', fontSize: '1.5rem' }}>
+                💡
+              </span>
+              Simulador de Portas Lógicas
+            </Navbar.Brand>
           </Container>
         </Navbar>
+
         <Container fluid className="mt-4">
           <Row>
             <Col md={3}>

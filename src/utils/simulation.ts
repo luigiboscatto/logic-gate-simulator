@@ -1,6 +1,14 @@
-import { values, mapValues } from 'lodash';
-import { LinkType, NodeType, SimulationState } from '../types';
+import { values, mapValues, cloneDeep } from 'lodash';
+import { SimulationState } from '../types';
 
+/**
+ * Verifica se a adição de um link criaria uma dependência circular.
+ * Essencial para evitar que o usuário crie circuitos inválidos.
+ * @param fromNodeId O nó de origem do link.
+ * @param toNodeId O nó de destino do link.
+ * @param simulation O estado atual da simulação.
+ * @returns `true` se um ciclo for detectado, `false` caso contrário.
+ */
 export function checkCircularDependency(fromNodeId: string, toNodeId: string, simulation: SimulationState): boolean {
   const visited = new Set<string>();
   const queue = [toNodeId];
@@ -8,7 +16,7 @@ export function checkCircularDependency(fromNodeId: string, toNodeId: string, si
   while (queue.length > 0) {
     const currentNodeId = queue.shift()!;
     if (currentNodeId === fromNodeId) {
-      return true; // Circular dependency found
+      return true; // Dependência circular encontrada
     }
     if (visited.has(currentNodeId)) {
       continue;
@@ -23,47 +31,74 @@ export function checkCircularDependency(fromNodeId: string, toNodeId: string, si
   return false;
 }
 
+/**
+ * Executa a simulação lógica usando um algoritmo de ordenação topológica.
+ * Isso garante que os nós sejam avaliados na ordem correta de dependência.
+ * @param simulation O estado atual da simulação a ser executado.
+ * @returns Um novo objeto de estado da simulação com os estados dos nós e links atualizados.
+ */
 export function runSimulation(simulation: SimulationState): SimulationState {
-  const newSimulation = {
-    ...simulation,
-    nodes: mapValues(simulation.nodes, node => ({ ...node, state: undefined })),
-    links: mapValues(simulation.links, link => ({ ...link, state: undefined })),
-  };
+  const sim = cloneDeep(simulation);
+  const { nodes, links } = sim;
 
-  const nodeQueue = values(newSimulation.nodes)
-    .filter(node => node.inputs.length === 0)
-    .map(node => node.id);
+  const adj: { [key: string]: string[] } = mapValues(nodes, () => []);
+  const inDegree: { [key: string]: number } = mapValues(nodes, () => 0);
 
-  const processedNodes = new Set<string>();
+  for (const link of values(links)) {
+    if (!adj[link.from.nodeId].includes(link.to.nodeId)) {
+      adj[link.from.nodeId].push(link.to.nodeId);
+      inDegree[link.to.nodeId]++;
+    }
+  }
 
-  while (nodeQueue.length > 0) {
-    const nodeId = nodeQueue.shift()!;
-    if (processedNodes.has(nodeId)) continue;
+  const queue = Object.keys(nodes).filter(nodeId => inDegree[nodeId] === 0);
+  const executionOrder: string[] = [];
 
-    const node: NodeType = newSimulation.nodes[nodeId];
-    const inputLinks = values(newSimulation.links).filter(link => link.to.nodeId === nodeId);
+  while (queue.length > 0) {
+    const nodeId = queue.shift()!;
+    executionOrder.push(nodeId);
 
-    if (inputLinks.some(link => typeof link.state === 'undefined')) {
-      // Not all inputs are ready, put it back in the queue
-      nodeQueue.push(nodeId);
+    for (const neighborId of adj[nodeId]) {
+      inDegree[neighborId]--;
+      if (inDegree[neighborId] === 0) {
+        queue.push(neighborId);
+      }
+    }
+  }
+
+  if (executionOrder.length !== Object.keys(nodes).length) {
+    console.warn("Foi detectado um ciclo no circuito. Alguns nós podem não ser avaliados.");
+  }
+
+  for (const nodeId of executionOrder) {
+    const node = nodes[nodeId];
+    if (!node) continue;
+
+    if (node.type === 'INPUT') {
       continue;
     }
 
     const inputValues = node.inputs.map(port => {
-        const link = values(newSimulation.links).find(l => l.to.portId === port.id);
-        return link?.state ?? false;
+      const incomingLink = values(links).find(l => l.to.portId === port.id);
+      if (!incomingLink) {
+        return false;
+      }
+      const sourceNode = nodes[incomingLink.from.nodeId];
+      return sourceNode.state ?? false;
     });
 
-    const [outputState] = node.logic(inputValues);
-    node.state = outputState;
-
-    const outputLinks: LinkType[] = values(newSimulation.links).filter(link => link.from.nodeId === nodeId);
-    for (const link of outputLinks) {
-      link.state = outputState;
-      nodeQueue.push(link.to.nodeId);
+    if (node.type === 'OUTPUT') {
+      node.state = inputValues[0] ?? false;
+    } else {
+      const outputStates = node.logic(inputValues);
+      node.state = outputStates[0];
     }
-    processedNodes.add(nodeId);
   }
 
-  return newSimulation;
+  for (const link of values(links)) {
+    const sourceNode = nodes[link.from.nodeId];
+    link.state = sourceNode.state;
+  }
+
+  return sim;
 }
